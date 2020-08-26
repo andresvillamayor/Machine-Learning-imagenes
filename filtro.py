@@ -18,14 +18,17 @@ class Filtro(object):
                                  if len(self.imagen.shape) > 2 else 2)
         if self.cantidad_canales > 2:
             mascara2d = self.imagen.sum(axis=-1)
+
         else:
             mascara2d = self.imagen.copy()
+
         suma_c = mascara2d.sum(axis=0)
         suma_f = mascara2d.sum(axis=1)
         pos_i_x = (suma_c != 0).tolist().index(True)
         pos_f_x = (suma_c.shape[0] - (suma_c != 0)[::-1].tolist().index(True))
         pos_i_y = (suma_f != 0).tolist().index(True)
         pos_f_y = (suma_f.shape[0] - (suma_f != 0)[::-1].tolist().index(True))
+        # verifica la cantidad de canales de la imagen
         if self.cantidad_canales > 2:
             self.imagen = self.imagen[pos_i_y:pos_f_y, pos_i_x:pos_f_x, :]
         else:
@@ -47,7 +50,9 @@ class Filtro(object):
 
         # ajustar el alto
         w_h = int(self.aspect_ratio * h)
+
         a_h = w_h * h
+
         # ajustar el ancho
         h_w = int(w / self.aspect_ratio)
         a_w = w * h_w
@@ -76,6 +81,7 @@ class Filtro(object):
         imagen = self.imagen.copy()
         imagen = cv.circle(imagen, tuple(self.ojo_izq), 4, (255, 0, 0), -1)
         imagen = cv.circle(imagen, tuple(self.ojo_der), 4, (0, 255, 0), -1)
+
         # rotacion
         img_rotada, M = rotate_bound(imagen, delta_angulos)
         ojo_ir = np.squeeze(cv.transform(self.ojo_izq.reshape(1, 1, -1), M))
